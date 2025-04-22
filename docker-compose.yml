@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ticketbot
+      POSTGRES_USER: botuser
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  bot:
+    build: ./bot
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://botuser:secret@db:5432/ticketbot
+      DISCORD_TOKEN: your-discord-token
+    command: ["python", "discord_bot.py"]
+
+volumes:
+  db_data:
